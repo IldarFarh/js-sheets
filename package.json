@@ -1,7 +1,7 @@
 {
-  "name": "jsexcel",
+  "name": "jssheets",
   "version": "1.0.0",
-  "description": "Excel on JS",
+  "description": "Sheets on pure JS",
   "main": "webpack.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
