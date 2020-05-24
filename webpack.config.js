@@ -9,14 +9,19 @@ const isProd = process.env.NODE_ENV === 'production'
 const filename = ext => !isProd ? `bundle.${ext}` : `bundle.[hash].${ext}`
 
 const jsLoaders = () => {
-  const loaders = [{
-    loader: 'babel-loader',
-    options: {
-      presets: ['@babel/preset-env']
+  const loaders = [
+    {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env'],
+        plugins: ['@babel/plugin-proposal-class-properties']
+      }
     }
-  }]
+  ]
 
   if (!isProd) loaders.push('eslint-loader')
+
+  return loaders
 }
 
 module.exports = {
