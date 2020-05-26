@@ -27,6 +27,12 @@ class Dom {
     else this.$el.appendChild(node)
     return this
   }
+  closest(selector) {
+    return $(this.$el.closest(selector))
+  }
+  getCoords() {
+    return this.$el.getBoundingClientRect()
+  }
 }
 
 export function $(selector) {
