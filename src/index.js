@@ -9,6 +9,4 @@ const sheet = new Sheet('#app', {
   components: [Header, Toolbar, Formula, Table]
 })
 
-console.log('Sheet', sheet)
-
 sheet.render()
