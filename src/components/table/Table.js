@@ -33,10 +33,16 @@ export class Table extends SheetComponent {
     if (shouldResize(event)) {
       resizeHandler(this.$root, event)
     } else if (isCell(event)) {
-      console.log(event)
       if (event.shiftKey) {
+        const target = $(event.target).id(true)
+        const current = this.selection.current.id(true)
+        console.log(range(target.col, current.col))
         this.selection.selectGroup($(event.target))
       } else this.selection.select($(event.target))
     }
   }
+}
+
+function range(start, end) {
+  return start - end
 }
