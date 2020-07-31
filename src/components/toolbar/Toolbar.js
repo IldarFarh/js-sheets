@@ -6,7 +6,6 @@ export class Toolbar extends SheetComponent {
   constructor($root, options) {
     super($root, {
       name: 'Toolbar',
-      listeners: ['click'],
       ...options
     })
   }
@@ -30,9 +29,5 @@ export class Toolbar extends SheetComponent {
   <div class="button">
     <i class="material-icons">format_underline</i>
   </div>`
-  }
-
-  onClick(event) {
-    console.log(event.target)
   }
 }

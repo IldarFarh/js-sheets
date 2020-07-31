@@ -1,4 +1,5 @@
 import {SheetComponent} from '@core/SheetsComponents'
+import {$} from '@core/dom'
 
 export class Formula extends SheetComponent {
   static className = 'sheets__formula'
@@ -14,13 +15,21 @@ export class Formula extends SheetComponent {
   toHTML() {
     return `
     <div class="info">fx</div>
-    <div class="input" contenteditable spellcheck="false"></div>
+    <div id='formula' class="input" contenteditable spellcheck="false"></div>
     `
   }
 
+  init() {
+    super.init()
+
+    this.$formula = this.$root.find('#formula')
+    this.$on('table:select', (element) => {
+      this.$formula.text(element.text())
+    })
+  }
+
   onInput(event) {
-    const text = event.target.textContent.trim()
-    this.$emit('formula:done', text)
+    this.$emit('formula:done', $(event.target).text())
   }
 
   onKeydown(event) {
