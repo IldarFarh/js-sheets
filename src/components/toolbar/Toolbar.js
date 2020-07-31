@@ -3,10 +3,10 @@ import {SheetComponent} from '@core/SheetsComponents'
 export class Toolbar extends SheetComponent {
   static className = 'sheets__toolbar'
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
       name: 'Toolbar',
-      listeners: ['click']
+      ...options
     })
   }
 
@@ -29,9 +29,5 @@ export class Toolbar extends SheetComponent {
   <div class="button">
     <i class="material-icons">format_underline</i>
   </div>`
-  }
-
-  onClick(event) {
-    console.log(event.target)
   }
 }
