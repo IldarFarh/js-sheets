@@ -2,16 +2,17 @@ import {SheetComponent} from '@core/SheetsComponents'
 import {createTable} from './table.template'
 import {$} from '@core/dom'
 import {resizeHandler} from './table.recize'
-import {shouldResize, isCell} from './table.functions'
+import {shouldResize, isCell, matrix, nextSelector} from './table.functions'
 import {TableSelection} from './table.TableSelection'
 
 export class Table extends SheetComponent {
   static className = 'sheets__table'
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
       name: 'Table',
-      listeners: ['mousedown']
+      listeners: ['mousedown', 'keydown'],
+      ...options
     })
   }
   resize
@@ -27,6 +28,12 @@ export class Table extends SheetComponent {
     super.init()
     const $cell = this.$root.find('[data-id="0:0"]')
     this.selection.select($cell)
+    this.$on('formula:done', text => {
+      this.selection.current.text(text)
+    })
+    this.$on('formula:enter', () => {
+      this.selection.current.focus()
+    })
   }
 
   onMousedown(event) {
@@ -34,15 +41,30 @@ export class Table extends SheetComponent {
       resizeHandler(this.$root, event)
     } else if (isCell(event)) {
       if (event.shiftKey) {
-        const target = $(event.target).id(true)
-        const current = this.selection.current.id(true)
-        console.log(range(target.col, current.col))
-        this.selection.selectGroup($(event.target))
+        const $cells = matrix($(event.target), this.selection.current)
+            .map(id => this.$root.find(`[data-id="${id}"]`))
+        this.selection.selectGroup($cells)
       } else this.selection.select($(event.target))
     }
   }
-}
 
-function range(start, end) {
-  return start - end
+  onKeydown(event) {
+    const keys = [
+      'Tab',
+      'Enter',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowDown',
+      'ArrowUp'
+    ]
+
+    const {key} = event
+
+    if (keys.includes(key) && !event.shiftKey) {
+      event.preventDefault()
+      const id = this.selection.current.id(true)
+      const $next = this.$root.find(nextSelector(key, id))
+      this.selection.select($next)
+    }
+  }
 }

@@ -3,10 +3,11 @@ import {SheetComponent} from '@core/SheetsComponents'
 export class Formula extends SheetComponent {
   static className = 'sheets__formula'
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
       name: 'Formula',
-      listeners: ['input']
+      listeners: ['input', 'keydown'],
+      ...options
     })
   }
 
@@ -18,6 +19,14 @@ export class Formula extends SheetComponent {
   }
 
   onInput(event) {
-    console.log('Formula: onInput', event)
+    const text = event.target.textContent.trim()
+    this.$emit('formula:done', text)
+  }
+
+  onKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      this.$emit('formula:enter')
+    }
   }
 }
