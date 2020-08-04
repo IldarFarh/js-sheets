@@ -4,6 +4,7 @@ import {$} from '@core/dom'
 import {resizeHandler} from './table.recize'
 import {shouldResize, isCell, matrix, nextSelector} from './table.functions'
 import {TableSelection} from './table.TableSelection'
+import * as actions from '@/redux/actions'
 
 export class Table extends SheetComponent {
   static className = 'sheets__table'
@@ -17,7 +18,7 @@ export class Table extends SheetComponent {
   }
   resize
   toHTML() {
-    return createTable(20)
+    return createTable(20, this.store.getState())
   }
 
   prepare() {
@@ -29,6 +30,7 @@ export class Table extends SheetComponent {
     this.selectCell(this.$root.find('[data-id="0:0"]'))
     this.$on('formula:done', text => {
       this.selection.current.text(text)
+      this.updateDataState(text)
     })
     this.$on('formula:enter', () => {
       this.selection.current.focus()
@@ -37,19 +39,28 @@ export class Table extends SheetComponent {
 
   selectCell($cell) {
     this.selection.select($cell)
-    this.$emit('table:select', $cell)
+    this.updateDataState($cell.text())
+  }
+
+  async resizeTable(event) {
+    try {
+      const data = await resizeHandler(this.$root, event)
+      this.$dispatch(actions.tableResize(data))
+    } catch (e) {
+      console.warn('Resize error', e.message);
+    }
   }
 
   onMousedown(event) {
     if (shouldResize(event)) {
-      resizeHandler(this.$root, event)
+      this.resizeTable(event)
     } else if (isCell(event)) {
       if (event.shiftKey) {
         const $cells = matrix($(event.target), this.selection.current)
             .map(id => this.$root.find(`[data-id="${id}"]`))
         this.selection.selectGroup($cells)
       } else {
-        this.selection.select($(event.target))
+        this.selectCell($(event.target))
       }
     }
   }
@@ -74,7 +85,14 @@ export class Table extends SheetComponent {
     }
   }
 
+  updateDataState(value) {
+    this.$dispatch(actions.changeText({
+      id: this.selection.current.id(),
+      value
+    }))
+  }
+
   onInput(event) {
-    this.$emit('table:select', $(event.target))
+    this.updateDataState($(event.target).text())
   }
 }

@@ -23,9 +23,13 @@ export class Formula extends SheetComponent {
     super.init()
 
     this.$formula = this.$root.find('#formula')
-    this.$on('table:select', (element) => {
-      this.$formula.text(element.text())
-    })
+    // this.$on('table:select', (element) => {
+    //   this.$formula.text(element.text())
+    // })
+
+    // this.$subscribe(state => {
+    //   this.$formula.text(state.currentText)
+    // })
   }
 
   onInput(event) {
