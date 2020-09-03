@@ -5,6 +5,7 @@ import {resizeHandler} from './table.recize'
 import {shouldResize, isCell, matrix, nextSelector} from './table.functions'
 import {TableSelection} from './table.TableSelection'
 import * as actions from '@/redux/actions'
+import {defaultStyles} from '../../constants'
 
 export class Table extends SheetComponent {
   static className = 'sheets__table'
@@ -35,11 +36,20 @@ export class Table extends SheetComponent {
     this.$on('formula:enter', () => {
       this.selection.current.focus()
     })
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.applyStyle(value)
+      this.$dispatch(actions.applyStyle({
+        value,
+        ids: this.selection.selectedIds
+      }))
+    })
   }
 
   selectCell($cell) {
     this.selection.select($cell)
     this.updateDataState($cell.text())
+    const styles = $cell.getStyles(Object.keys(defaultStyles))
+    this.$dispatch(actions.currentStyles(styles))
   }
 
   async resizeTable(event) {

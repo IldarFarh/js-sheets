@@ -6,12 +6,13 @@ export class Header extends SheetComponent {
   constructor($root, options) {
     super($root, {
       name: 'Header',
+      subscribe: ['header'],
       ...options
     })
   }
 
   toHTML() {
-    return `<input type="text" class="input" value="New table" />
+    return `<input id='title' type="text" class="input" value="New table" />
     <div>
       <div class="button">
         <i class="material-icons">delete</i>
@@ -20,5 +21,9 @@ export class Header extends SheetComponent {
         <i class="material-icons">exit_to_app</i>
       </div>
     </div>`
+  }
+
+  storeChanged({header}) {
+    this.$root.find('#title').text(header)
   }
 }
